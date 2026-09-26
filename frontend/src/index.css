@@ -1,0 +1,141 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+:root {
+  --bg: #FAF7F2;
+  --surface: #FFFFFF;
+  --text-primary: #1F1B16;
+  --text-muted: #6B6459;
+  --accent: #C1440E;
+  --accent-hover: #A3380B;
+  --border: #E8E1D6;
+  --success: #3D6B4C;
+  --error: #A33A2E;
+}
+
+.dark {
+  --bg: #14110E;
+  --surface: #1E1A16;
+  --text-primary: #F7F3EE;
+  --text-muted: #A89E92;
+  --accent: #E05D26;
+  --accent-hover: #F26F38;
+  --border: #332B24;
+  --success: #528A63;
+  --error: #D65A4B;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, .font-editorial {
+  font-family: 'Fraunces', Georgia, serif;
+}
+
+/* Custom interactive button styling matching requirements */
+.btn-terracotta {
+  background-color: var(--accent);
+  color: #FFFFFF;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-terracotta:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+  transform: scale(1.02);
+}
+
+.btn-terracotta:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #F5EFEB;
+  border-color: #D6CCC0;
+  transform: scale(1.01);
+}
+
+/* Soft artisanal card shadow */
+.card-soft {
+  background-color: var(--surface);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(31, 27, 22, 0.06);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.card-soft:hover {
+  box-shadow: 0 6px 20px rgba(31, 27, 22, 0.09);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF7F2;
+}
+::-webkit-scrollbar-thumb {
+  background: #DDD5C7;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #C4BAAA;
+}
+
+/* React Bits SplitText animation helper classes */
+.split-parent {
+  display: inline-block;
+}
+.split-line, .split-word, .split-char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* Night Market Dark Mode Theme Support */
+.dark body {
+  background-color: #14110E;
+  color: #F7F3EE;
+}
+.dark .card-spotlight {
+  background-color: #1C1814;
+  border-color: #332B24;
+}
+.dark .bg-white {
+  background-color: #1C1814 !important;
+}
+.dark .bg-\[\#FAF7F2\] {
+  background-color: #14110E !important;
+}
+.dark .border-\[\#E8E1D6\] {
+  border-color: #332B24 !important;
+}
+.dark .text-\[\#1F1B16\] {
+  color: #F7F3EE !important;
+}
+.dark .text-\[\#6B6459\] {
+  color: #A89E92 !important;
+}
+

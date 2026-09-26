@@ -1,0 +1,24 @@
+{
+  "name": "shopsphere-monorepo",
+  "version": "1.0.0",
+  "description": "ShopSphere Distributed Microservices Architecture",
+  "private": true,
+  "scripts": {
+    "build:shared": "cd shared && npm install && npm run build",
+    "build:auth": "cd services/auth-service && npm install && npm run build",
+    "build:product": "cd services/product-service && npm install && npm run build",
+    "build:order": "cd services/order-service && npm install && npm run build",
+    "build:payment": "cd services/payment-service && npm install && npm run build",
+    "build:notification": "cd services/notification-service && npm install && npm run build",
+    "build:gateway": "cd gateway && npm install && npm run build",
+    "build:frontend": "cd frontend && npm install && npm run build",
+    "build:all": "npm run build:shared && npm run build:auth && npm run build:product && npm run build:order && npm run build:payment && npm run build:notification && npm run build:gateway && npm run build:frontend",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f"
+  },
+  "dependencies": {
+    "ogl": "^1.0.11",
+    "typescript": "^7.0.2"
+  }
+}

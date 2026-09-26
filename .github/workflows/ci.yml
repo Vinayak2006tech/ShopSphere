@@ -1,0 +1,85 @@
+name: ShopSphere Microservices CI/CD
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  typescript-services:
+    name: Build & Typecheck TypeScript Microservices
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - shared
+          - gateway
+          - services/auth-service
+          - services/product-service
+          - services/order-service
+          - services/payment-service
+          - services/notification-service
+          - services/search-service
+          - services/review-service
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: '${{ matrix.service }}/package.json'
+
+      - name: Install Dependencies
+        working-directory: ${{ matrix.service }}
+        run: npm ci || npm install
+
+      - name: Build / Typecheck
+        working-directory: ${{ matrix.service }}
+        run: npm run build
+
+  python-recommendations:
+    name: Lint & Test Python Recommendation Engine
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        working-directory: services/recommendation-service
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Health Check Smoke Test
+        working-directory: services/recommendation-service
+        run: |
+          python -c "import main; print('Python recommendation engine imported successfully')"
+
+  frontend-build:
+    name: Build Vite + React Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package.json'
+
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: npm ci || npm install
+
+      - name: Build Production Assets
+        working-directory: frontend
+        run: npm run build

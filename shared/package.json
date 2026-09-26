@@ -1,0 +1,14 @@
+{
+  "name": "@shopsphere/shared",
+  "version": "1.0.0",
+  "description": "Shared event contracts and types for ShopSphere microservices",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

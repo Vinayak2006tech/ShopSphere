@@ -1,0 +1,185 @@
+### ==============================================================================
+### ShopSphere Microservices - HTTP Test Requests
+### All requests route through the API Gateway on port 5000 or to direct service ports.
+### ==============================================================================
+
+@gatewayUrl = http://localhost:5000
+@authUrl = http://localhost:5001
+@productUrl = http://localhost:5002
+@orderUrl = http://localhost:5003
+@paymentUrl = http://localhost:5004
+@notificationUrl = http://localhost:5005
+
+### ------------------------------------------------------------------------------
+### 1. API Gateway Aggregated Health Check
+### ------------------------------------------------------------------------------
+GET {{gatewayUrl}}/health
+Accept: application/json
+
+### ------------------------------------------------------------------------------
+### 2. Auth Service Endpoints (via Gateway /api/auth)
+### ------------------------------------------------------------------------------
+
+# @name registerUser
+POST {{gatewayUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Eleanor Vance",
+  "email": "eleanor.vance@shopsphere.artisan",
+  "password": "Password123!",
+  "role": "customer"
+}
+
+###
+
+# @name loginUser
+POST {{gatewayUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "eleanor.vance@shopsphere.artisan",
+  "password": "Password123!"
+}
+
+### Store token for authenticated requests
+@authToken = {{loginUser.response.body.data.accessToken}}
+@refreshToken = {{loginUser.response.body.data.refreshToken}}
+
+### Verify JWT Token
+GET {{gatewayUrl}}/api/auth/verify-token
+Authorization: Bearer {{authToken}}
+
+### Refresh JWT Token
+POST {{gatewayUrl}}/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### ------------------------------------------------------------------------------
+### 3. Product Service Endpoints (via Gateway /api/products)
+### ------------------------------------------------------------------------------
+
+### Get All Products
+GET {{gatewayUrl}}/api/products
+Accept: application/json
+
+### Filter Products by Category
+GET {{gatewayUrl}}/api/products?category=Ceramics%20%26%20Tableware
+Accept: application/json
+
+### Search Products
+GET {{gatewayUrl}}/api/products?search=leather
+Accept: application/json
+
+### Get All Categories
+GET {{gatewayUrl}}/api/categories
+Accept: application/json
+
+### Get Single Product by Slug or ID
+GET {{gatewayUrl}}/api/products/terracotta-hand-thrown-pourer
+Accept: application/json
+
+### Create New Product
+POST {{gatewayUrl}}/api/products
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Cast Bronze Paperweight",
+  "price": 48.00,
+  "category": "Stationery & Study",
+  "stock": 30,
+  "description": "Solid sand-cast bronze prism, patinated with traditional green verdigris.",
+  "images": [
+    "https://images.unsplash.com/photo-1585336261026-7f55f284e3a8?auto=format&fit=crop&w=1000&q=80"
+  ],
+  "attributes": {
+    "Weight": "420g",
+    "Material": "Solid architectural bronze",
+    "Origin": "Kyoto, Japan"
+  }
+}
+
+### Adjust Product Stock (Triggers RabbitMQ stock.updated event)
+PATCH {{gatewayUrl}}/api/products/terracotta-hand-thrown-pourer/stock
+Content-Type: application/json
+
+{
+  "quantity": 10,
+  "reason": "RESTOCK"
+}
+
+### ------------------------------------------------------------------------------
+### 4. Order Service Endpoints (via Gateway /api/orders)
+### ------------------------------------------------------------------------------
+
+### Create Order (Publishes order.created to RabbitMQ)
+# @name createOrder
+POST {{gatewayUrl}}/api/orders
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "customerName": "Eleanor Vance",
+  "customerEmail": "eleanor.vance@shopsphere.artisan",
+  "items": [
+    {
+      "productId": "terracotta-hand-thrown-pourer",
+      "productName": "Terracotta Hand-Thrown Pourer",
+      "price": 68.00,
+      "quantity": 2,
+      "imageUrl": "https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?auto=format&fit=crop&w=1000&q=80"
+    }
+  ],
+  "shippingAddress": {
+    "street": "742 Evergreen Terrace",
+    "city": "Portland",
+    "state": "OR",
+    "postalCode": "97201",
+    "country": "United States"
+  }
+}
+
+### Store Order ID
+@orderId = {{createOrder.response.body.data.id}}
+
+### Fetch All Orders (Filtered by user ID extracted from JWT)
+GET {{gatewayUrl}}/api/orders
+Authorization: Bearer {{authToken}}
+
+### Fetch Single Order with Items
+GET {{gatewayUrl}}/api/orders/{{orderId}}
+Authorization: Bearer {{authToken}}
+
+### ------------------------------------------------------------------------------
+### 5. Payment Service Endpoints (via Gateway /api/payments)
+### ------------------------------------------------------------------------------
+
+### Fetch All Payments Ledger
+GET {{gatewayUrl}}/api/payments
+Authorization: Bearer {{authToken}}
+
+### Process Payment Directly (Alternative to automatic order.created event)
+POST {{gatewayUrl}}/api/payments/process
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "orderId": "{{orderId}}",
+  "userId": "usr_test_123",
+  "customerEmail": "eleanor.vance@shopsphere.artisan",
+  "amount": 136.00,
+  "paymentMethod": "card_stripe_simulated",
+  "simulateFailure": false
+}
+
+### ------------------------------------------------------------------------------
+### 6. Notification Service Endpoints (via Gateway /api/notifications)
+### ------------------------------------------------------------------------------
+
+### List Email Delivery Logs & Live Preview URLs
+GET {{gatewayUrl}}/api/notifications
+Accept: application/json
