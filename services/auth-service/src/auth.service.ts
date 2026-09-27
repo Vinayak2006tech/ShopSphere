@@ -2,7 +2,13 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { pool } from './db';
 import { logger } from './logger';
-import { JWTPayload } from '@shopsphere/shared';
+export interface JWTPayload {
+  id?: string;
+  userId?: string;
+  email: string;
+  role: string;
+  name?: string;
+}
 
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-shopsphere-jwt-access-key-2026';
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'super-secret-shopsphere-jwt-refresh-key-2026';

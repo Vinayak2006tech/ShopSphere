@@ -23,6 +23,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Load local .env if present
+env_file = os.path.join(os.path.dirname(__file__), ".env")
+if os.path.exists(env_file):
+    with open(env_file) as f:
+        for line in f:
+            if line.strip() and not line.startswith("#") and "=" in line:
+                k, v = line.strip().split("=", 1)
+                os.environ[k.strip()] = v.strip().strip('"').strip("'")
+
 PORT = int(os.environ.get("PORT", 5007))
 PRODUCT_SERVICE_URL = os.environ.get("PRODUCT_SERVICE_URL", "http://localhost:5002")
 RABBITMQ_URL = os.environ.get("RABBITMQ_URL", "amqp://guest:guest@localhost:5672")
@@ -79,6 +88,14 @@ def rabbitmq_worker():
     while True:
         try:
             params = pika.URLParameters(RABBITMQ_URL)
+            if RABBITMQ_URL.startswith("amqps://"):
+                import ssl
+                try:
+                    import certifi
+                    context = ssl.create_default_context(cafile=certifi.where())
+                except Exception:
+                    context = ssl.create_default_context()
+                params.ssl_options = pika.SSLOptions(context)
             connection = pika.BlockingConnection(params)
             channel = connection.channel()
 

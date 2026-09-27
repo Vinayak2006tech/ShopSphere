@@ -1,0 +1,265 @@
+# ==============================================================================
+# ShopSphere Microservices Ecosystem — Render Blueprint Specification
+# Docs: https://render.com/docs/blueprint-spec
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. API Gateway (Public Web Service)
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: shopsphere-gateway
+    runtime: node
+    plan: free
+    region: ohio
+    rootDir: .
+    buildCommand: cd shared && npm install && npm run build && cd ../gateway && npm install && npm run build
+    startCommand: cd gateway && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        value: super-secret-shopsphere-jwt-access-key-2026
+      - key: AUTH_SERVICE_URL
+        fromService:
+          type: pserv
+          name: shopsphere-auth-service
+          property: hostport
+      - key: PRODUCT_SERVICE_URL
+        fromService:
+          type: pserv
+          name: shopsphere-product-service
+          property: hostport
+      - key: ORDER_SERVICE_URL
+        fromService:
+          type: pserv
+          name: shopsphere-order-service
+          property: hostport
+      - key: PAYMENT_SERVICE_URL
+        fromService:
+          type: pserv
+          name: shopsphere-payment-service
+          property: hostport
+      - key: NOTIFICATION_SERVICE_URL
+        fromService:
+          type: pserv
+          name: shopsphere-notification-service
+          property: hostport
+      - key: SEARCH_SERVICE_URL
+        fromService:
+          type: pserv
+          name: shopsphere-search-service
+          property: hostport
+      - key: RECOMMENDATION_SERVICE_URL
+        fromService:
+          type: pserv
+          name: shopsphere-recommendation-service
+          property: hostport
+      - key: REVIEW_SERVICE_URL
+        fromService:
+          type: pserv
+          name: shopsphere-review-service
+          property: hostport
+
+  # ----------------------------------------------------------------------------
+  # 2. Auth Service (Private Service — PostgreSQL)
+  # ----------------------------------------------------------------------------
+  - type: pserv
+    name: shopsphere-auth-service
+    runtime: node
+    plan: free
+    region: ohio
+    rootDir: services/auth-service
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5001
+      - key: DATABASE_URL
+        value: postgresql://neondb_owner:npg_VZJe2mDYjif5@ep-small-resonance-b510dlyf-pooler.c-7.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+      - key: JWT_SECRET
+        value: super-secret-shopsphere-jwt-access-key-2026
+      - key: JWT_REFRESH_SECRET
+        value: super-secret-shopsphere-jwt-refresh-key-2026
+
+  # ----------------------------------------------------------------------------
+  # 3. Product Service (Private Service — MongoDB Atlas + Redis + RabbitMQ)
+  # ----------------------------------------------------------------------------
+  - type: pserv
+    name: shopsphere-product-service
+    runtime: node
+    plan: free
+    region: ohio
+    rootDir: .
+    buildCommand: cd shared && npm install && npm run build && cd ../services/product-service && npm install && npm run build
+    startCommand: cd services/product-service && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5002
+      - key: MONGO_URI
+        value: mongodb+srv://vaishayvinayak_db_user:g9657HFT1phoqmuk@cluster0.0enx1xt.mongodb.net/shopsphere_product?retryWrites=true&w=majority
+      - key: RABBITMQ_URL
+        value: amqps://rewxgfql:LOC9Odbl9kxEug9CuKIGqXoDCce0peaO@gerbil.rmq.cloudamqp.com/rewxgfql
+      - key: REDIS_URL
+        value: redis://localhost:6379
+
+  # ----------------------------------------------------------------------------
+  # 4. Order Service (Private Service — PostgreSQL + RabbitMQ)
+  # ----------------------------------------------------------------------------
+  - type: pserv
+    name: shopsphere-order-service
+    runtime: node
+    plan: free
+    region: ohio
+    rootDir: .
+    buildCommand: cd shared && npm install && npm run build && cd ../services/order-service && npm install && npm run build
+    startCommand: cd services/order-service && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5003
+      - key: DATABASE_URL
+        value: postgresql://neondb_owner:npg_VZJe2mDYjif5@ep-small-resonance-b510dlyf-pooler.c-7.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+      - key: RABBITMQ_URL
+        value: amqps://rewxgfql:LOC9Odbl9kxEug9CuKIGqXoDCce0peaO@gerbil.rmq.cloudamqp.com/rewxgfql
+      - key: PRODUCT_SERVICE_URL
+        fromService:
+          type: pserv
+          name: shopsphere-product-service
+          property: hostport
+
+  # ----------------------------------------------------------------------------
+  # 5. Payment Service (Private Service — PostgreSQL + RabbitMQ)
+  # ----------------------------------------------------------------------------
+  - type: pserv
+    name: shopsphere-payment-service
+    runtime: node
+    plan: free
+    region: ohio
+    rootDir: .
+    buildCommand: cd shared && npm install && npm run build && cd ../services/payment-service && npm install && npm run build
+    startCommand: cd services/payment-service && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5004
+      - key: DATABASE_URL
+        value: postgresql://neondb_owner:npg_VZJe2mDYjif5@ep-small-resonance-b510dlyf-pooler.c-7.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+      - key: RABBITMQ_URL
+        value: amqps://rewxgfql:LOC9Odbl9kxEug9CuKIGqXoDCce0peaO@gerbil.rmq.cloudamqp.com/rewxgfql
+      - key: STRIPE_SECRET_KEY
+        value: sk_test_shopsphere_mock_stripe_key_2026
+
+  # ----------------------------------------------------------------------------
+  # 6. Notification Service (Private Service — MongoDB Atlas + RabbitMQ)
+  # ----------------------------------------------------------------------------
+  - type: pserv
+    name: shopsphere-notification-service
+    runtime: node
+    plan: free
+    region: ohio
+    rootDir: .
+    buildCommand: cd shared && npm install && npm run build && cd ../services/notification-service && npm install && npm run build
+    startCommand: cd services/notification-service && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5005
+      - key: MONGO_URI
+        value: mongodb+srv://vaishayvinayak_db_user:g9657HFT1phoqmuk@cluster0.0enx1xt.mongodb.net/shopsphere_notification?retryWrites=true&w=majority
+      - key: RABBITMQ_URL
+        value: amqps://rewxgfql:LOC9Odbl9kxEug9CuKIGqXoDCce0peaO@gerbil.rmq.cloudamqp.com/rewxgfql
+
+  # ----------------------------------------------------------------------------
+  # 7. Search Service (Private Service — Typo-Tolerant Inverted Index)
+  # ----------------------------------------------------------------------------
+  - type: pserv
+    name: shopsphere-search-service
+    runtime: node
+    plan: free
+    region: ohio
+    rootDir: .
+    buildCommand: cd shared && npm install && npm run build && cd ../services/search-service && npm install && npm run build
+    startCommand: cd services/search-service && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5006
+      - key: RABBITMQ_URL
+        value: amqps://rewxgfql:LOC9Odbl9kxEug9CuKIGqXoDCce0peaO@gerbil.rmq.cloudamqp.com/rewxgfql
+      - key: PRODUCT_SERVICE_URL
+        fromService:
+          type: pserv
+          name: shopsphere-product-service
+          property: hostport
+
+  # ----------------------------------------------------------------------------
+  # 8. Recommendation Service (Private Service — Python 3 FastAPI Engine)
+  # ----------------------------------------------------------------------------
+  - type: pserv
+    name: shopsphere-recommendation-service
+    runtime: python
+    plan: free
+    region: ohio
+    rootDir: services/recommendation-service
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port 5007
+    envVars:
+      - key: PORT
+        value: 5007
+      - key: RABBITMQ_URL
+        value: amqps://rewxgfql:LOC9Odbl9kxEug9CuKIGqXoDCce0peaO@gerbil.rmq.cloudamqp.com/rewxgfql
+      - key: PRODUCT_SERVICE_URL
+        fromService:
+          type: pserv
+          name: shopsphere-product-service
+          property: hostport
+
+  # ----------------------------------------------------------------------------
+  # 9. Review & Rating Service (Private Service — MongoDB Atlas + RabbitMQ)
+  # ----------------------------------------------------------------------------
+  - type: pserv
+    name: shopsphere-review-service
+    runtime: node
+    plan: free
+    region: ohio
+    rootDir: .
+    buildCommand: cd shared && npm install && npm run build && cd ../services/review-service && npm install && npm run build
+    startCommand: cd services/review-service && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5008
+      - key: MONGO_URI
+        value: mongodb+srv://vaishayvinayak_db_user:g9657HFT1phoqmuk@cluster0.0enx1xt.mongodb.net/shopsphere_review?retryWrites=true&w=majority
+      - key: RABBITMQ_URL
+        value: amqps://rewxgfql:LOC9Odbl9kxEug9CuKIGqXoDCce0peaO@gerbil.rmq.cloudamqp.com/rewxgfql
+
+  # ----------------------------------------------------------------------------
+  # 10. Frontend (Public Static Site — React 18 + Vite)
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: shopsphere-frontend
+    runtime: static
+    plan: free
+    region: ohio
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_GATEWAY_URL
+        fromService:
+          type: web
+          name: shopsphere-gateway
+          property: host

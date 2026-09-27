@@ -8,3 +8,7 @@ yarn-debug.log*
 yarn-error.log*
 .vscode/
 .idea/
+.neon
+.env.local
+__pycache__/
+*.pyc

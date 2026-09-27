@@ -10,14 +10,18 @@
     "build:order": "cd services/order-service && npm install && npm run build",
     "build:payment": "cd services/payment-service && npm install && npm run build",
     "build:notification": "cd services/notification-service && npm install && npm run build",
+    "build:search": "cd services/search-service && npm install && npm run build",
+    "build:review": "cd services/review-service && npm install && npm run build",
     "build:gateway": "cd gateway && npm install && npm run build",
     "build:frontend": "cd frontend && npm install && npm run build",
-    "build:all": "npm run build:shared && npm run build:auth && npm run build:product && npm run build:order && npm run build:payment && npm run build:notification && npm run build:gateway && npm run build:frontend",
+    "build:all": "npm run build:shared && npm run build:auth && npm run build:product && npm run build:order && npm run build:payment && npm run build:notification && npm run build:search && npm run build:review && npm run build:gateway && npm run build:frontend",
     "docker:up": "docker compose up --build",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f"
   },
   "dependencies": {
+    "@neon/config": "^1.8.2",
+    "@neon/env": "^1.4.7",
     "ogl": "^1.0.11",
     "typescript": "^7.0.2"
   }
