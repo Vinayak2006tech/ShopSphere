@@ -13,7 +13,7 @@ services:
     plan: free
     region: ohio
     rootDir: .
-    buildCommand: cd shared && npm install && npm run build && cd ../gateway && npm install && npm run build
+    buildCommand: cd shared && npm install --include=dev && npm run build && cd ../gateway && npm install --include=dev && npm run build
     startCommand: cd gateway && npm start
     envVars:
       - key: NODE_ENV
@@ -72,7 +72,7 @@ services:
     plan: free
     region: ohio
     rootDir: services/auth-service
-    buildCommand: npm install && npm run build
+    buildCommand: npm install --include=dev && npm run build
     startCommand: npm start
     envVars:
       - key: NODE_ENV
@@ -95,7 +95,7 @@ services:
     plan: free
     region: ohio
     rootDir: .
-    buildCommand: cd shared && npm install && npm run build && cd ../services/product-service && npm install && npm run build
+    buildCommand: cd shared && npm install --include=dev && npm run build && cd ../services/product-service && npm install --include=dev && npm run build
     startCommand: cd services/product-service && npm start
     envVars:
       - key: NODE_ENV
@@ -118,7 +118,7 @@ services:
     plan: free
     region: ohio
     rootDir: .
-    buildCommand: cd shared && npm install && npm run build && cd ../services/order-service && npm install && npm run build
+    buildCommand: cd shared && npm install --include=dev && npm run build && cd ../services/order-service && npm install --include=dev && npm run build
     startCommand: cd services/order-service && npm start
     envVars:
       - key: NODE_ENV
@@ -144,7 +144,7 @@ services:
     plan: free
     region: ohio
     rootDir: .
-    buildCommand: cd shared && npm install && npm run build && cd ../services/payment-service && npm install && npm run build
+    buildCommand: cd shared && npm install --include=dev && npm run build && cd ../services/payment-service && npm install --include=dev && npm run build
     startCommand: cd services/payment-service && npm start
     envVars:
       - key: NODE_ENV
@@ -167,7 +167,7 @@ services:
     plan: free
     region: ohio
     rootDir: .
-    buildCommand: cd shared && npm install && npm run build && cd ../services/notification-service && npm install && npm run build
+    buildCommand: cd shared && npm install --include=dev && npm run build && cd ../services/notification-service && npm install --include=dev && npm run build
     startCommand: cd services/notification-service && npm start
     envVars:
       - key: NODE_ENV
@@ -188,7 +188,7 @@ services:
     plan: free
     region: ohio
     rootDir: .
-    buildCommand: cd shared && npm install && npm run build && cd ../services/search-service && npm install && npm run build
+    buildCommand: cd shared && npm install --include=dev && npm run build && cd ../services/search-service && npm install --include=dev && npm run build
     startCommand: cd services/search-service && npm start
     envVars:
       - key: NODE_ENV
@@ -234,7 +234,7 @@ services:
     plan: free
     region: ohio
     rootDir: .
-    buildCommand: cd shared && npm install && npm run build && cd ../services/review-service && npm install && npm run build
+    buildCommand: cd shared && npm install --include=dev && npm run build && cd ../services/review-service && npm install --include=dev && npm run build
     startCommand: cd services/review-service && npm start
     envVars:
       - key: NODE_ENV
