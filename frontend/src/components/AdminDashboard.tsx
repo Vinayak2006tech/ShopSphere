@@ -13,6 +13,7 @@ import {
   Layers,
 } from 'lucide-react';
 import { Product } from '../types';
+import { BASE_URL } from '../api';
 
 interface AdminDashboardProps {
   isOpen: boolean;
@@ -45,7 +46,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const fetchCatalog = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/products?limit=50');
+      const res = await fetch(`${BASE_URL}/api/products?limit=50`);
       const json = await res.json();
       if (json.success) {
         setProducts(json.data.products);
@@ -66,7 +67,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const handleAdjustStock = async (productId: string, quantityChange: number) => {
     try {
       setUpdatingId(productId);
-      const res = await fetch(`/api/products/${productId}/stock`, {
+      const res = await fetch(`${BASE_URL}/api/products/${productId}/stock`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -95,7 +96,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setSubmitting(true);
     setFeedback(null);
     try {
-      const res = await fetch('/api/products', {
+      const res = await fetch(`${BASE_URL}/api/products`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

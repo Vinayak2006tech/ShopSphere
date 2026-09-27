@@ -3,6 +3,7 @@ import { X, Plus, Minus, Check, ShieldCheck, Truck, Star, Sparkles, MessageSquar
 import { Product } from '../types';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { BASE_URL } from '../api';
 
 interface ProductDetailModalProps {
   product: Product | null;
@@ -39,13 +40,13 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
     setQuantity(1);
 
     // Fetch reviews
-    fetch(`/api/reviews/product/${product.id}`)
+    fetch(`${BASE_URL}/api/reviews/product/${product.id}`)
       .then((res) => (res.ok ? res.json() : []))
       .then((data: Review[]) => setReviews(data))
       .catch(() => setReviews([]));
 
     // Fetch Python recommendation engine results
-    fetch(`/api/recommendations/product/${product.id}`)
+    fetch(`${BASE_URL}/api/recommendations/product/${product.id}`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data: any) => {
         if (data?.recommendations) {
@@ -62,7 +63,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
     if (!newComment.trim()) return;
     setSubmittingReview(true);
     try {
-      const res = await fetch('/api/reviews', {
+      const res = await fetch(`${BASE_URL}/api/reviews`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

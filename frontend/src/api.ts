@@ -1,6 +1,6 @@
 import { Product, Order, User, SystemHealthResponse, NotificationLog } from './types';
 
-const BASE_URL = ''; // Relative path leverages Vite dev proxy & Gateway in production
+export const BASE_URL = (import.meta.env.VITE_GATEWAY_URL || '').replace(/\/$/, '');
 
 function getAuthHeaders(): HeadersInit {
   const token = localStorage.getItem('shopsphere_access_token');
@@ -47,7 +47,8 @@ export async function verifyToken(token: string) {
 
 // 2. Product API
 export async function fetchProducts(params?: { category?: string; search?: string; sort?: string }): Promise<Product[]> {
-  const url = new URL(`${window.location.origin}/api/products`);
+  const base = BASE_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+  const url = new URL(`${base}/api/products`);
   if (params?.category && params.category !== 'All') {
     url.searchParams.append('category', params.category);
   }
