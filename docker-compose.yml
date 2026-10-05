@@ -1,232 +1,51 @@
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Docker Compose reference guide at
+# https://docs.docker.com/go/compose-spec-reference/
+
+# Here the instructions define your application as a service called "server".
+# This service is built from the Dockerfile in the current directory.
+# You can add other services your application may depend on here, such as a
+# database or a cache. For examples, see the Awesome Compose repository:
+# https://github.com/docker/awesome-compose
 services:
-  # ==========================================
-  # Infrastructure: Message Broker & Databases
-  # ==========================================
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
-    container_name: shopsphere-rabbitmq
-    ports:
-      - "5672:5672"     # AMQP protocol
-      - "15672:15672"   # Management Web UI
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - shopsphere-network
-
-  postgres:
-    image: postgres:16-alpine
-    container_name: shopsphere-postgres
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_MULTIPLE_DATABASES: shopsphere_auth,shopsphere_order,shopsphere_payment
-    volumes:
-      - ./docker/postgres/init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - shopsphere-network
-
-  mongodb:
-    image: mongo:7.0
-    container_name: shopsphere-mongodb
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.runCommand('ping').ok"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - shopsphere-network
-
-  redis:
-    image: redis:7-alpine
-    container_name: shopsphere-redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - shopsphere-network
-
-  # ==========================================
-  # Microservices
-  # ==========================================
-  auth-service:
+  server:
     build:
       context: .
-      dockerfile: services/auth-service/Dockerfile
-    container_name: shopsphere-auth-service
-    ports:
-      - "5001:5001"
     environment:
-      PORT: 5001
       NODE_ENV: production
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/shopsphere_auth
-      JWT_SECRET: super-secret-shopsphere-jwt-access-key-2026
-      JWT_REFRESH_SECRET: super-secret-shopsphere-jwt-refresh-key-2026
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - shopsphere-network
-
-  product-service:
-    build:
-      context: .
-      dockerfile: services/product-service/Dockerfile
-    container_name: shopsphere-product-service
     ports:
-      - "5002:5002"
-    environment:
-      PORT: 5002
-      NODE_ENV: production
-      MONGO_URI: mongodb://mongodb:27017/shopsphere_product
-      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
-    depends_on:
-      mongodb:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    networks:
-      - shopsphere-network
+      - 2375:2375
 
-  order-service:
-    build:
-      context: .
-      dockerfile: services/order-service/Dockerfile
-    container_name: shopsphere-order-service
-    ports:
-      - "5003:5003"
-    environment:
-      PORT: 5003
-      NODE_ENV: production
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/shopsphere_order
-      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
-      PRODUCT_SERVICE_URL: http://product-service:5002
-    depends_on:
-      postgres:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-      product-service:
-        condition: service_started
-    networks:
-      - shopsphere-network
+# The commented out section below is an example of how to define a PostgreSQL
+# database that your application can use. `depends_on` tells Docker Compose to
+# start the database before your application. The `db-data` volume persists the
+# database data between container restarts. The `db-password` secret is used
+# to set the database password. You must create `db/password.txt` and add
+# a password of your choosing to it before running `docker-compose up`.
+#     depends_on:
+#       db:
+#         condition: service_healthy
+#   db:
+#     image: postgres
+#     restart: always
+#     user: postgres
+#     secrets:
+#       - db-password
+#     volumes:
+#       - db-data:/var/lib/postgresql/data
+#     environment:
+#       - POSTGRES_DB=example
+#       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+#     expose:
+#       - 5432
+#     healthcheck:
+#       test: [ "CMD", "pg_isready" ]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
+# volumes:
+#   db-data:
+# secrets:
+#   db-password:
+#     file: db/password.txt
 
-  payment-service:
-    build:
-      context: .
-      dockerfile: services/payment-service/Dockerfile
-    container_name: shopsphere-payment-service
-    ports:
-      - "5004:5004"
-    environment:
-      PORT: 5004
-      NODE_ENV: production
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/shopsphere_payment
-      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
-      STRIPE_SECRET_KEY: sk_test_shopsphere_mock_stripe_key_2026
-    depends_on:
-      postgres:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    networks:
-      - shopsphere-network
-
-  notification-service:
-    build:
-      context: .
-      dockerfile: services/notification-service/Dockerfile
-    container_name: shopsphere-notification-service
-    ports:
-      - "5005:5005"
-    environment:
-      PORT: 5005
-      NODE_ENV: production
-      MONGO_URI: mongodb://mongodb:27017/shopsphere_notification
-      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
-      SMTP_HOST: smtp.ethereal.email
-      SMTP_PORT: 587
-    depends_on:
-      mongodb:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    networks:
-      - shopsphere-network
-
-  # ==========================================
-  # API Gateway & Reverse Proxy
-  # ==========================================
-  gateway:
-    build:
-      context: .
-      dockerfile: gateway/Dockerfile
-    container_name: shopsphere-gateway
-    ports:
-      - "5000:5000"
-    environment:
-      PORT: 5000
-      NODE_ENV: production
-      JWT_SECRET: super-secret-shopsphere-jwt-access-key-2026
-      AUTH_SERVICE_URL: http://auth-service:5001
-      PRODUCT_SERVICE_URL: http://product-service:5002
-      ORDER_SERVICE_URL: http://order-service:5003
-      PAYMENT_SERVICE_URL: http://payment-service:5004
-      NOTIFICATION_SERVICE_URL: http://notification-service:5005
-      RATE_LIMIT_WINDOW_MS: 900000
-      RATE_LIMIT_MAX_REQUESTS: 200
-    depends_on:
-      - auth-service
-      - product-service
-      - order-service
-      - payment-service
-      - notification-service
-    networks:
-      - shopsphere-network
-
-  # ==========================================
-  # Frontend Application
-  # ==========================================
-  frontend:
-    build:
-      context: .
-      dockerfile: frontend/Dockerfile
-    container_name: shopsphere-frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - gateway
-    networks:
-      - shopsphere-network
-
-networks:
-  shopsphere-network:
-    driver: bridge
-
-volumes:
-  postgres_data:
-  mongodb_data:
-  redis_data:

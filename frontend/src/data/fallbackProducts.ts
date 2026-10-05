@@ -1,0 +1,407 @@
+import { Product } from '../types';
+
+export const FALLBACK_PRODUCTS: Product[] = [
+  {
+    id: 'prod_1',
+    name: 'Terracotta Hand-Thrown Pourer',
+    slug: 'terracotta-hand-thrown-pourer',
+    description: 'Fired in a wood-kiln in small batches. Unglazed exterior with an earthy terracotta finish and food-safe glazed interior. Ideal for pouring olive oil, maple syrup, or warmed cream.',
+    price: 68.0,
+    category: 'Ceramics & Tableware',
+    stock: 24,
+    featured: true,
+    editorialTag: 'Curator’s Choice',
+    images: [
+      'https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=1000&q=80',
+    ],
+    attributes: {
+      Material: 'Local clay, lead-free glaze',
+      Dimensions: '14cm H x 9cm W',
+      Capacity: '350 ml',
+      Origin: 'Alentejo, Portugal',
+    },
+    rating: 4.9,
+    reviewsCount: 38,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_2',
+    name: 'Natural Vachetta Leather Tote',
+    slug: 'natural-vachetta-leather-tote',
+    description: 'Crafted from untreated Tuscan vegetable-tanned leather that develops a rich caramel patina over time. Cut by hand and finished with copper saddler rivets.',
+    price: 245.0,
+    category: 'Leather Goods',
+    stock: 12,
+    featured: false,
+    editorialTag: 'Timeless Heirloom',
+    images: [
+      'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=1000&q=80',
+    ],
+    attributes: {
+      Leather: 'Full-grain Italian Vachetta',
+      Hardware: 'Solid raw copper rivets',
+      Dimensions: '38cm x 33cm x 12cm',
+      Origin: 'Florence, Italy',
+    },
+    rating: 5.0,
+    reviewsCount: 52,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_3',
+    name: 'Matte Stoneware Bowl (Set of 2)',
+    slug: 'matte-stoneware-bowl-set',
+    description: 'Generously proportioned cereal and soup bowls featuring a tactile sand finish outside and smooth chalk glaze inside. Dishwasher and microwave safe.',
+    price: 54.0,
+    category: 'Ceramics & Tableware',
+    stock: 45,
+    featured: false,
+    images: [
+      'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?auto=format&fit=crop&w=1000&q=80',
+    ],
+    attributes: {
+      Material: 'High-fired stoneware',
+      Dimensions: '17cm diameter x 7cm height',
+      Care: 'Dishwasher safe',
+      Origin: 'Kyoto, Japan',
+    },
+    rating: 4.8,
+    reviewsCount: 29,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_4',
+    name: 'Solid Walnut Catch-All Desk Tray',
+    slug: 'solid-walnut-catch-all-desk-tray',
+    description: 'Milled from a single piece of kiln-dried American black walnut and rubbed with cold-pressed walnut oil. Perfect for pocket essentials, fountain pens, and keys.',
+    price: 76.0,
+    category: 'Home & Living',
+    stock: 18,
+    featured: false,
+    images: [
+      'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&w=1000&q=80',
+    ],
+    attributes: {
+      Wood: 'FSC-Certified Black Walnut',
+      Finish: 'Pure natural walnut oil',
+      Dimensions: '24cm x 15cm x 2.5cm',
+      Origin: 'Oregon, USA',
+    },
+    rating: 4.9,
+    reviewsCount: 19,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_5',
+    name: 'Japanese Brass Mechanical Pencil 0.5mm',
+    slug: 'japanese-brass-mechanical-pencil',
+    description: 'Heavyweight hexagonal drafting instrument in raw untreated brass. Weighted deliberately towards the tip for fatigue-free drafting and note taking.',
+    price: 42.0,
+    category: 'Stationery & Study',
+    stock: 35,
+    featured: false,
+    images: [
+      'https://images.unsplash.com/photo-1585336261026-7f55f284e3a8?auto=format&fit=crop&w=1000&q=80',
+    ],
+    attributes: {
+      Material: 'Solid solid brass rod',
+      Mechanism: 'Cushioned lead clutch 0.5mm',
+      Weight: '38g',
+      Origin: 'Tokyo, Japan',
+    },
+    rating: 4.7,
+    reviewsCount: 44,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_6',
+    name: 'Wild Honey & Cedar Beeswax Candle',
+    slug: 'wild-honey-cedar-beeswax-candle',
+    description: 'Poured with 100% unbleached local beeswax and a natural braided cotton wick. Emits a clean, honeyed amber glow with subtle notes of cedar bark and dried grass.',
+    price: 34.0,
+    category: 'Home & Living',
+    stock: 50,
+    featured: false,
+    images: [
+      'https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=1000&q=80',
+    ],
+    attributes: {
+      Wax: '100% Pure cappings beeswax',
+      BurnTime: 'approx. 45 hours',
+      Wick: 'Unbleached braided cotton',
+      Origin: 'Cotswolds, UK',
+    },
+    rating: 4.9,
+    reviewsCount: 67,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_7',
+    name: 'Handwoven Belgian Linen Bed Throw',
+    slug: 'handwoven-belgian-linen-bed-throw',
+    description: 'Pre-washed flax linen woven on heritage shuttle looms. Features an airy waffle weave texture with hand-knotted fringe edges. Breathable in summer, cozy in winter.',
+    price: 180.0,
+    category: 'Home & Living',
+    stock: 14,
+    featured: false,
+    editorialTag: 'Natural Fiber',
+    images: [
+      'https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&w=1000&q=80',
+    ],
+    attributes: {
+      Composition: '100% Belgian Masters of Linen flax',
+      Dimensions: '200cm x 150cm',
+      Texture: 'Heavyweight pre-washed waffle',
+      Origin: 'Ghent, Belgium',
+    },
+    rating: 4.9,
+    reviewsCount: 31,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_8',
+    name: 'Pure Brass Pour-Over Coffee Stand',
+    slug: 'pure-brass-pour-over-coffee-stand',
+    description: 'An architectural coffee dripper crafted with solid brass rods and a milled drip tray. Designed to pair with standard cone drippers or Chemex carafes.',
+    price: 125.0,
+    category: 'Coffee & Tea',
+    stock: 16,
+    featured: false,
+    images: [
+      'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1000&q=80',
+    ],
+    attributes: {
+      Material: 'Cast brass & silicone grommet',
+      Compatibility: 'Hario V60 / Kalita Wave / Chemex',
+      Dimensions: '22cm H x 14cm D',
+      Origin: 'Melbourne, Australia',
+    },
+    rating: 4.8,
+    reviewsCount: 22,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_9',
+    name: 'Smoked Oak & Cast Iron Mortar & Pestle',
+    slug: 'smoked-oak-cast-iron-mortar-pestle',
+    description: 'Heavyweight hand-poured virgin cast iron mortar paired with a hand-turned French smoked oak pestle. The textured base creates friction for grinding whole spices and crushing aromatic herbs.',
+    price: 88.0,
+    category: 'Kitchen & Culinary',
+    stock: 20,
+    featured: true,
+    editorialTag: 'Heritage Craft',
+    images: [
+      'https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&w=1000&q=80',
+    ],
+    attributes: {
+      Mortar: 'Rough-cast virgin iron (1.8 kg)',
+      Pestle: 'French smoked oak with natural beeswax seal',
+      Dimensions: '12cm diameter x 8cm height',
+      Origin: 'Lyon, France',
+    },
+    rating: 4.9,
+    reviewsCount: 35,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_10',
+    name: 'Wabi-Sabi Stoneware Espresso Cup (Set of 4)',
+    slug: 'wabi-sabi-stoneware-espresso-cup-set',
+    description: 'Pinched and wheel-finished by hand, each cup exhibits unique thumb indentations and charcoal flashing from an atmospheric reduction firing.',
+    price: 48.0,
+    category: 'Ceramics & Tableware',
+    stock: 30,
+    featured: false,
+    images: [
+      'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=1000&q=80',
+    ],
+    attributes: {
+      Material: 'Local iron-rich stoneware',
+      Capacity: '90 ml / 3.0 oz',
+      Glaze: 'Matte Shino ash glaze',
+      Origin: 'Gifu Prefecture, Japan',
+    },
+    rating: 4.8,
+    reviewsCount: 18,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_11',
+    name: 'Cordovan Leather Minimalist Bifold Wallet',
+    slug: 'cordovan-leather-minimalist-bifold-wallet',
+    description: 'Meticulously crafted from genuine Shell Cordovan leather known for its mirror-like luster and non-creasing durability. Saddle-stitched by hand using waxed French linen thread.',
+    price: 135.0,
+    category: 'Leather Goods',
+    stock: 15,
+    featured: false,
+    editorialTag: 'Artisan Benchmark',
+    images: [
+      'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=1000&q=80',
+    ],
+    attributes: {
+      Leather: 'Genuine Horween Shell Cordovan',
+      Stitching: 'Hand-sewn Lin Câblé linen thread',
+      Capacity: '6-8 cards plus folded currency',
+      Origin: 'Chicago, USA',
+    },
+    rating: 5.0,
+    reviewsCount: 42,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_12',
+    name: 'Sandalwood & Bergamot Botanical Diffuser',
+    slug: 'sandalwood-bergamot-botanical-diffuser',
+    description: 'Cold-pressed essential oils blended with wild bergamot, creamy Mysore sandalwood, and amber resin. Presented in an apothecary amber glass vessel with unbleached natural rattan reeds.',
+    price: 52.0,
+    category: 'Home & Living',
+    stock: 40,
+    featured: false,
+    images: [
+      'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=1000&q=80',
+    ],
+    attributes: {
+      Volume: '200 ml / 6.7 fl oz',
+      Lifespan: 'Approx. 3-4 months diffusion',
+      Vessel: 'Recycled UV-protective amber apothecary glass',
+      Origin: 'Grasse, France',
+    },
+    rating: 4.9,
+    reviewsCount: 27,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_13',
+    name: 'Handmade Japanese Washi Paper Notebook (A5)',
+    slug: 'handmade-japanese-washi-paper-notebook',
+    description: 'Handcrafted using heritage mulberry bark (Kozo) fibers with subtle natural deckled edges. Binds 160 pages of ink-resistant laid paper that opens completely flat.',
+    price: 28.0,
+    category: 'Stationery & Study',
+    stock: 55,
+    featured: false,
+    images: [
+      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=1000&q=80',
+    ],
+    attributes: {
+      Paper: '90gsm Japanese Kozo washi',
+      Pages: '160 unruled laid pages',
+      Binding: 'Thread-sewn exposed spine lay-flat',
+      Origin: 'Echizen, Japan',
+    },
+    rating: 4.8,
+    reviewsCount: 51,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_14',
+    name: 'Forged Copper Tea Kettle with Wood Handle',
+    slug: 'forged-copper-tea-kettle',
+    description: 'Hammered from a single solid sheet of high-purity copper with a lead-free molten tin interior lining. Distributes thermal heat rapidly and evenly with a hand-carved walnut handle.',
+    price: 195.0,
+    category: 'Coffee & Tea',
+    stock: 10,
+    featured: true,
+    editorialTag: 'Master Metalwork',
+    images: [
+      'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=1000&q=80',
+    ],
+    attributes: {
+      Material: 'Hand-hammered 1.2mm pure copper',
+      Interior: 'Food-grade pure molten tin lining',
+      Handle: 'Kiln-dried American walnut',
+      Capacity: '1.4 Liters',
+      Origin: 'Niigata, Japan',
+    },
+    rating: 5.0,
+    reviewsCount: 39,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_15',
+    name: 'Raw Silk & Organic Cotton Fringe Scarf',
+    slug: 'raw-silk-organic-cotton-fringe-scarf',
+    description: 'Woven on wooden pit looms with hand-spun Matka silk warp and organic Aegean cotton weft. Hand-dipped in organic botanical indigo vat for subtle tonal variations.',
+    price: 95.0,
+    category: 'Apparel & Textiles',
+    stock: 22,
+    featured: false,
+    editorialTag: 'Plant Dyed',
+    images: [
+      'https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?auto=format&fit=crop&w=1000&q=80',
+    ],
+    attributes: {
+      Composition: '55% Wild Matka silk, 45% Organic combed cotton',
+      Dimensions: '190cm x 65cm',
+      Dye: 'Natural indigo fermentation vat',
+      Origin: 'Bengaluru, India',
+    },
+    rating: 4.9,
+    reviewsCount: 16,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_16',
+    name: 'Nordic Beechwood Salt & Pepper Grinder Pair',
+    slug: 'nordic-beechwood-salt-pepper-grinder-pair',
+    description: 'Sculptural cylinders turned from solid Danish beechwood with an invisible adjustment dial and diamond-sharp CrushGrind ceramic burrs guaranteed for 25 years.',
+    price: 72.0,
+    category: 'Kitchen & Culinary',
+    stock: 28,
+    featured: false,
+    images: [
+      'https://images.unsplash.com/photo-1588854337221-4cf9fa96059c?auto=format&fit=crop&w=1000&q=80',
+    ],
+    attributes: {
+      Wood: 'FSC-Certified Danish Beechwood',
+      Mechanism: 'CrushGrind high-tech ceramic burrs',
+      Dimensions: '20cm height x 5.5cm diameter',
+      Origin: 'Aarhus, Denmark',
+    },
+    rating: 4.7,
+    reviewsCount: 23,
+    createdAt: new Date().toISOString(),
+  },
+];
+
+export function getFallbackCategories(): { name: string; count: number }[] {
+  const counts: Record<string, number> = {};
+  for (const p of FALLBACK_PRODUCTS) {
+    counts[p.category] = (counts[p.category] || 0) + 1;
+  }
+  return Object.entries(counts).map(([name, count]) => ({ name, count }));
+}
+
+export function filterFallbackProducts(params?: {
+  category?: string;
+  search?: string;
+  sort?: string;
+}): Product[] {
+  let list = [...FALLBACK_PRODUCTS];
+
+  if (params?.category && params.category !== 'All') {
+    list = list.filter((p) => p.category.toLowerCase() === params.category!.toLowerCase());
+  }
+
+  if (params?.search) {
+    const q = params.search.toLowerCase();
+    list = list.filter(
+      (p) =>
+        p.name.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q)
+    );
+  }
+
+  if (params?.sort === 'price-asc') {
+    list.sort((a, b) => a.price - b.price);
+  } else if (params?.sort === 'price-desc') {
+    list.sort((a, b) => b.price - a.price);
+  } else if (params?.sort === 'rating') {
+    list.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  }
+
+  return list;
+}

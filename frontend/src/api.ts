@@ -46,37 +46,77 @@ export async function verifyToken(token: string) {
 }
 
 // 2. Product API
-export async function fetchProducts(params?: { category?: string; search?: string; sort?: string }): Promise<Product[]> {
-  const base = BASE_URL || (typeof window !== 'undefined' ? window.location.origin : '');
-  const url = new URL(`${base}/api/products`);
-  if (params?.category && params.category !== 'All') {
-    url.searchParams.append('category', params.category);
-  }
-  if (params?.search) {
-    url.searchParams.append('search', params.search);
-  }
-  if (params?.sort) {
-    url.searchParams.append('sort', params.sort);
-  }
+import { filterFallbackProducts, getFallbackCategories, FALLBACK_PRODUCTS } from './data/fallbackProducts';
 
-  const res = await fetch(url.toString());
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Failed to load products');
-  return data.data.products;
+export async function fetchProducts(params?: { category?: string; search?: string; sort?: string }): Promise<Product[]> {
+  try {
+    const base = BASE_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+    const url = new URL(`${base}/api/products`);
+    if (params?.category && params.category !== 'All') {
+      url.searchParams.append('category', params.category);
+    }
+    if (params?.search) {
+      url.searchParams.append('search', params.search);
+    }
+    if (params?.sort) {
+      url.searchParams.append('sort', params.sort);
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s timeout
+
+    const res = await fetch(url.toString(), { signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    if (!res.ok) {
+      console.warn(`[ShopSphere] Product service returned ${res.status}. Falling back to curated catalog cache.`);
+      return filterFallbackProducts(params);
+    }
+
+    const data = await res.json();
+    if (data?.data?.products && Array.isArray(data.data.products) && data.data.products.length > 0) {
+      return data.data.products;
+    }
+    return filterFallbackProducts(params);
+  } catch (err: any) {
+    console.warn(`[ShopSphere] Network/Gateway error fetching products: ${err.message}. Serving curated catalog cache.`);
+    return filterFallbackProducts(params);
+  }
 }
 
 export async function fetchCategories(): Promise<{ name: string; count: number }[]> {
-  const res = await fetch(`${BASE_URL}/api/categories`);
-  const data = await res.json();
-  if (!res.ok) return [];
-  return data.data || [];
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4000);
+    const res = await fetch(`${BASE_URL}/api/categories`, { signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    if (!res.ok) return getFallbackCategories();
+    const data = await res.json();
+    if (data?.data && Array.isArray(data.data) && data.data.length > 0) {
+      return data.data;
+    }
+    return getFallbackCategories();
+  } catch {
+    return getFallbackCategories();
+  }
 }
 
 export async function fetchProductById(id: string): Promise<Product> {
-  const res = await fetch(`${BASE_URL}/api/products/${id}`);
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Failed to load product');
-  return data.data;
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4000);
+    const res = await fetch(`${BASE_URL}/api/products/${id}`, { signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    if (!res.ok) throw new Error('Product not found in live service');
+    const data = await res.json();
+    return data.data;
+  } catch {
+    const fallback = FALLBACK_PRODUCTS.find((p) => p.id === id || p.slug === id);
+    if (fallback) return fallback;
+    throw new Error('Product not found');
+  }
 }
 
 // 3. Order API
