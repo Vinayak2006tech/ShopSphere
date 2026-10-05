@@ -16,6 +16,7 @@ import {
   Lock,
   RotateCcw
 } from 'lucide-react';
+import { DatasetOverview } from './DatasetOverview';
 
 interface LandingPageProps {
   onEnterStore: () => void;
@@ -219,6 +220,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           >
             <Activity className="w-4 h-4 text-[#3D6B4C]" />
             <span>Inspect Live Topology (:8080)</span>
+          </button>
+
+          <button
+            onClick={() => {
+              const el = document.getElementById('platform-datasets');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="px-5 py-3.5 text-sm font-medium text-[#1F1B16] bg-white border border-[#E8E1D6] rounded-md hover:bg-[#FAF7F2] transition-all shadow-soft flex items-center gap-2"
+          >
+            <Database className="w-4 h-4 text-[#C1440E]" />
+            <span>Dataset Overview</span>
           </button>
 
           <button
@@ -474,7 +486,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </div>
       </section>
 
-      {/* 5. Bottom Invitation Banner (Editorial Warm Light Mode) */}
+      {/* 5. Platform Datasets & Specifications Explorer */}
+      <div id="platform-datasets">
+        <DatasetOverview onEnterStore={onEnterStore} />
+      </div>
+
+      {/* 6. Bottom Invitation Banner (Editorial Warm Light Mode) */}
       <section className="relative overflow-hidden p-8 sm:p-12 rounded-2xl bg-gradient-to-br from-[#FAF0EB] via-[#FFFDF9] to-[#F5ECE1] border border-[#E8E1D6] text-[#1F1B16] text-center space-y-6 shadow-soft">
         <div className="max-w-2xl mx-auto space-y-3">
           <span className="text-xs uppercase tracking-wider font-semibold text-[#C1440E]">
